@@ -35,6 +35,8 @@
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
   overflow-x:hidden;transition:background .5s,color .4s;line-height:1.6;}
+nav,.cc,.pc,.skc,.achc,.contc,.sb,.contf,.fi,.ft,#tbtn,.hbadge,.pl,.pl-emo,.exc{
+  transition:background-color .45s ease,border-color .45s ease,color .35s ease,box-shadow .45s ease;}
 img{display:block;max-width:100%;}
 a{text-decoration:none;color:inherit;}
 button{font-family:inherit;border:none;background:none;}
@@ -52,7 +54,21 @@ ul{list-style:none;}
 #cur-svg.hov{width:34px;height:34px;filter:drop-shadow(0 0 9px #14b8a6);}
 #cur-dot{position:fixed;pointer-events:none;z-index:99998;
   width:5px;height:5px;border-radius:50%;background:var(--primary2);
-  opacity:.6;top:0;left:0;transform:translate(-50%,-50%);transition:left .09s,top .09s;}
+  opacity:.6;top:0;left:0;transform:translate(-50%,-50%);}
+#cur-glow{position:fixed;pointer-events:none;z-index:99997;
+  width:42px;height:42px;border-radius:50%;top:0;left:0;
+  background:radial-gradient(circle,var(--glow),transparent 72%);
+  opacity:.55;filter:blur(2px);transform:translate(-50%,-50%);}
+.cur-ripple{position:fixed;pointer-events:none;z-index:99996;border-radius:50%;
+  border:2px solid var(--primary);top:0;left:0;transform:translate(-50%,-50%);
+  animation:curpulse .6s ease-out forwards;}
+@keyframes curpulse{0%{width:8px;height:8px;opacity:.9;}100%{width:76px;height:76px;opacity:0;}}
+body:not([data-theme="light"]) #cur-glow{opacity:.7;}
+[data-theme="light"] #cur-glow{opacity:.35;filter:blur(1px);}
+@media(hover:none),(pointer:coarse){
+  *,*::before,*::after{cursor:auto !important;}
+  #cur-svg,#cur-dot,#cur-glow{display:none !important;}
+}
 
 /* ── SCROLL PROGRESS ── */
 #prog{position:fixed;top:0;left:0;height:2px;z-index:10000;
@@ -67,6 +83,39 @@ ul{list-style:none;}
   0%{transform:translateY(110vh) rotate(0deg);}
   100%{transform:translateY(-15vh) rotate(25deg);}
 }
+
+/* ── FUTURISTIC FLOATING SHAPES ── */
+.geoShapes{position:absolute;inset:0;}
+.gshape{position:absolute;will-change:transform,opacity;
+  animation-name:gfloat;animation-timing-function:linear;animation-iteration-count:infinite;
+  animation-duration:var(--dur);animation-delay:var(--del);opacity:0;}
+.gshape.circle{border:1.5px solid var(--primary);border-radius:50%;}
+.gshape.ring{border:2px solid var(--primary2);border-radius:50%;}
+.gshape.hex{background:var(--primary);clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);}
+.gshape.diamond{background:var(--primary2);transform:rotate(45deg);}
+.gshape.dot{background:var(--cyan);border-radius:50%;}
+.gshape.gline{background:linear-gradient(180deg,var(--primary),transparent);width:1.5px;}
+.gshape.near{transition:filter .35s,box-shadow .35s;
+  filter:brightness(1.6) saturate(1.3) !important;
+  box-shadow:0 0 18px var(--glow);}
+@keyframes gfloat{
+  0%{transform:translate(var(--sx),var(--sy)) rotate(0deg);opacity:0;}
+  8%{opacity:var(--op);}
+  92%{opacity:var(--op);}
+  100%{transform:translate(var(--ex),var(--ey)) rotate(var(--rot));opacity:0;}
+}
+/* dark mode: sharper, faster, brighter */
+.gshape{filter:drop-shadow(0 0 0 transparent);}
+[data-theme="light"] .gshape{animation-duration:calc(var(--dur) * 1.4);}
+[data-theme="light"] .gshape.circle,[data-theme="light"] .gshape.ring{filter:none;}
+body:not([data-theme="light"]) .gshape.circle,body:not([data-theme="light"]) .gshape.ring{
+  filter:drop-shadow(0 0 4px var(--glow));}
+body.anim-paused .gshape,body.anim-paused .flico,body.anim-paused .ab{animation-play-state:paused;}
+@media(prefers-reduced-motion:reduce){
+  .gshape,.flico,.ab{animation:none !important;}
+}
+@media(max-width:1000px){.geoShapes .gshape:nth-child(n+11){display:none;}}
+@media(max-width:600px){.geoShapes .gshape,.flico{display:none;}}
 .ab{position:absolute;border-radius:50%;filter:blur(90px);opacity:.17;
   animation:drift 14s ease-in-out infinite;}
 [data-theme="light"] .ab{opacity:.1;}
@@ -104,9 +153,10 @@ ul{list-style:none;}
 .nlink{font-size:.82rem;font-weight:500;color:var(--text2);position:relative;
   padding-bottom:3px;transition:color var(--tr);}
 .nlink::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;
-  background:var(--grad1);border-radius:2px;transition:width var(--tr);}
+  background:var(--grad1);border-radius:2px;transition:width .3s cubic-bezier(.4,0,.2,1),box-shadow .3s;
+  box-shadow:0 0 0 rgba(0,0,0,0);}
 .nlink:hover,.nlink.act{color:var(--text);}
-.nlink:hover::after,.nlink.act::after{width:100%;}
+.nlink:hover::after,.nlink.act::after{width:100%;box-shadow:0 0 8px var(--glow);}
 .nr{display:flex;align-items:center;gap:12px;}
 #tbtn{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:100px;
   border:1px solid var(--border2);background:var(--surface);color:var(--text2);
@@ -198,9 +248,15 @@ ul{list-style:none;}
 .hsoc{display:flex;gap:9px;flex-wrap:wrap;}
 .sb{width:37px;height:37px;border-radius:10px;display:flex;align-items:center;
   justify-content:center;border:1px solid var(--border);background:var(--surface);
-  color:var(--text2);font-size:.88rem;transition:all var(--tr);}
+  color:var(--text2);font-size:.88rem;transition:transform .25s cubic-bezier(.34,1.56,.64,1),
+  box-shadow .25s,border-color .25s,background .25s,color .25s;position:relative;}
+.sb::before{content:'';position:absolute;inset:-6px;border-radius:inherit;
+  border:1px solid var(--primary);opacity:0;transform:scale(.8);
+  transition:opacity .25s,transform .25s;pointer-events:none;}
 .sb:hover{background:var(--surface2);color:var(--text);
-  border-color:var(--primary);box-shadow:0 0 13px var(--glow);transform:translateY(-3px);}
+  border-color:var(--primary);box-shadow:0 0 16px var(--glow);
+  transform:translateY(-4px) scale(1.08);}
+.sb:hover::before{opacity:.55;transform:scale(1);}
 .sb-lbl{width:auto;padding:0 14px 0 12px;border-radius:100px;gap:7px;
   font-size:.8rem;font-weight:600;color:var(--text2);}
 .sb-lbl:hover{color:var(--primary);}
@@ -528,6 +584,7 @@ footer{padding:42px 28px 22px;position:relative;z-index:2;border-top:1px solid v
   <circle cx="13" cy="13" r="2" fill="#e8a33d"/>
 </svg>
 <div id="cur-dot"></div>
+<div id="cur-glow"></div>
 
 <!-- Background -->
 <div class="bgl">
@@ -536,6 +593,7 @@ footer{padding:42px 28px 22px;position:relative;z-index:2;border-top:1px solid v
   <div class="ab a3"></div>
   <div class="bgrid"></div>
   <div class="flogos" id="flogos"></div>
+  <div class="geoShapes" id="geoShapes"></div>
 </div>
 
 <!-- NAV -->
@@ -618,7 +676,7 @@ footer{padding:42px 28px 22px;position:relative;z-index:2;border-top:1px solid v
 
       <div class="hctas">
         <a href="#projects" class="btnp rip">🚀 View Projects</a>
-        <a href="CHITRA_M_FlowCV_Resume_2026-07-17.pdf" download class="btno rip">
+        <a href="chitra-resume.pdf" download class="btno rip">
           📥 Resume
         </a>
         <a href="#contact" class="btno rip">📩 Contact</a>
@@ -628,6 +686,7 @@ footer{padding:42px 28px 22px;position:relative;z-index:2;border-top:1px solid v
         <a href="https://github.com/chitram-hp" target="_blank" class="sb sb-lbl" title="GitHub">🐙<span>GitHub</span></a>
         <a href="https://www.linkedin.com/in/chitra-mv" target="_blank" class="sb sb-lbl" title="LinkedIn">💼<span>LinkedIn</span></a>
         <a href="https://leetcode.com/u/Chitra_M_" target="_blank" class="sb sb-lbl" title="LeetCode">💻<span>LeetCode</span></a>
+        <a href="https://wa.me/7397114399" target="_blank" class="sb sb-lbl" title="WhatsApp">💬<span>WhatsApp</span></a>
         <a href="mailto:chitramuthuvinayagam@gmail.com" class="sb" title="Email">📧</a>
       </div>
     </div>
@@ -1033,7 +1092,7 @@ footer{padding:42px 28px 22px;position:relative;z-index:2;border-top:1px solid v
             <div class="contci ic">📞</div>
             <div class="contt"><small>Phone</small><span>+91 73971 14399</span></div>
           </a>
-          <a href="https://wa.me/1234567909" target="_blank" class="contc rv">
+          <a href="https://wa.me/7397114399" target="_blank" class="contc rv">
             <div class="contci ig">💬</div>
             <div class="contt"><small>WhatsApp</small><span>Chat with me directly</span></div>
           </a>
@@ -1051,11 +1110,11 @@ footer{padding:42px 28px 22px;position:relative;z-index:2;border-top:1px solid v
           </div>
         </div>
         <div style="margin-top:16px;display:flex;gap:11px;flex-wrap:wrap;">
-          <a href="CHITRA_M_FlowCV_Resume_2026-07-17.pdf" download
+          <a href="chitra-resume.pdf" download
             class="btnp rip rv" style="display:inline-flex;">
             📥 Download Resume
           </a>
-          <a href="https://wa.me/1234567909" target="_blank"
+          <a href="https://wa.me/7397114399" target="_blank"
             class="btno rip rv" style="display:inline-flex;">
             💬 Chat on WhatsApp
           </a>
@@ -1164,29 +1223,66 @@ footer{padding:42px 28px 22px;position:relative;z-index:2;border-top:1px solid v
 
 <script>
 /* ── CURSOR ── */
-const cs=document.getElementById('cur-svg'),cd=document.getElementById('cur-dot');
-let mx=0,my=0,dx=0,dy=0;
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX;my=e.clientY;
-  cs.style.left=mx+'px';cs.style.top=my+'px';
-});
-(function anim(){
-  dx+=(mx-dx)*.1;dy+=(my-dy)*.1;
-  cd.style.left=dx+'px';cd.style.top=dy+'px';
-  requestAnimationFrame(anim);
-})();
-document.querySelectorAll('a,button,.skc,.pc,.achc,.cc,.contc').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{
-    cs.classList.add('hov');
-    cs.querySelectorAll('polygon')[0].setAttribute('stroke','#14b8a6');
-    cs.querySelector('circle').setAttribute('fill','#14b8a6');
+const isTouch=window.matchMedia('(hover: none), (pointer: coarse)').matches;
+if(!isTouch){
+  const cs=document.getElementById('cur-svg'),cd=document.getElementById('cur-dot'),
+    cg=document.getElementById('cur-glow');
+  let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,gx=mx,gy=my;
+
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
+
+  (function loop(){
+    cs.style.left=mx+'px';cs.style.top=my+'px';           // instant
+    dx+=(mx-dx)*.22;dy+=(my-dy)*.22;                        // fast follower
+    cd.style.left=dx+'px';cd.style.top=dy+'px';
+    gx+=(mx-gx)*.09;gy+=(my-gy)*.09;                        // slow glow trail
+    cg.style.left=gx+'px';cg.style.top=gy+'px';
+    requestAnimationFrame(loop);
+  })();
+
+  document.querySelectorAll('a,button,.skc,.pc,.achc,.cc,.contc,.gshape').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      cs.classList.add('hov');
+      cs.querySelectorAll('polygon')[0].setAttribute('stroke','#14b8a6');
+      cs.querySelector('circle').setAttribute('fill','#14b8a6');
+    });
+    el.addEventListener('mouseleave',()=>{
+      cs.classList.remove('hov');
+      cs.querySelectorAll('polygon')[0].setAttribute('stroke','#e8a33d');
+      cs.querySelector('circle').setAttribute('fill','#e8a33d');
+    });
   });
-  el.addEventListener('mouseleave',()=>{
-    cs.classList.remove('hov');
-    cs.querySelectorAll('polygon')[0].setAttribute('stroke','#e8a33d');
-    cs.querySelector('circle').setAttribute('fill','#e8a33d');
+
+  // click ripple / energy pulse
+  document.addEventListener('mousedown',e=>{
+    const r=document.createElement('div');r.className='cur-ripple';
+    r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+    document.body.appendChild(r);
+    setTimeout(()=>r.remove(),620);
   });
-});
+
+  // proximity reaction with floating shapes ("touching")
+  (function proximityLoop(){
+    const shapes=document.querySelectorAll('.gshape');
+    shapes.forEach(s=>{
+      const r=s.getBoundingClientRect();
+      const cx=r.left+r.width/2,cy=r.top+r.height/2;
+      const d=Math.hypot(mx-cx,my-cy);
+      s.classList.toggle('near',d<90);
+    });
+    setTimeout(()=>requestAnimationFrame(proximityLoop),90);
+  })();
+
+  // magnetic pull for social buttons
+  document.querySelectorAll('.sb').forEach(btn=>{
+    btn.addEventListener('mousemove',e=>{
+      const r=btn.getBoundingClientRect();
+      const relX=e.clientX-(r.left+r.width/2),relY=e.clientY-(r.top+r.height/2);
+      btn.style.transform=`translate(${relX*.18}px,${relY*.35-4}px) scale(1.08)`;
+    });
+    btn.addEventListener('mouseleave',()=>{btn.style.transform='';});
+  });
+}
 
 /* ── SCROLL PROGRESS ── */
 const prog=document.getElementById('prog');
@@ -1272,12 +1368,37 @@ let dark=true;
 if(localStorage.getItem('cm-th')==='light'){dark=false;html.setAttribute('data-theme','light');}
 function ui(){tico.textContent=dark?'🌙':'☀️';tlbl.textContent=dark?'Light':'Dark';}
 ui();
-tb.addEventListener('click',()=>{
+tb.addEventListener('click',(e)=>{
+  const rect=tb.getBoundingClientRect();
+  const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+  const oldBg=getComputedStyle(html).getPropertyValue('--bg').trim()||'#000';
+  const maxR=Math.hypot(Math.max(cx,innerWidth-cx),Math.max(cy,innerHeight-cy));
+
+  // circular reveal: overlay shows the OLD theme's background and shrinks
+  // away from the toggle button to reveal the newly-applied theme beneath.
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:9997;pointer-events:none;'+
+    'background:'+oldBg+';clip-path:circle('+maxR+'px at '+cx+'px '+cy+'px);'+
+    'transition:clip-path .65s cubic-bezier(.65,0,.35,1);will-change:clip-path;';
+  document.body.appendChild(overlay);
+
+  // flip theme immediately — content underneath is now the new theme
   dark=!dark;html.setAttribute('data-theme',dark?'dark':'light');
   localStorage.setItem('cm-th',dark?'dark':'light');ui();
+
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    overlay.style.clipPath='circle(0px at '+cx+'px '+cy+'px)';
+  }));
+  setTimeout(()=>overlay.remove(),700);
+
+  // one subtle flash/ripple pulse at the button itself
   const b=document.createElement('div');
-  b.style.cssText='position:fixed;pointer-events:none;z-index:9500;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);width:0;height:0;transition:width .55s ease,height .55s ease,opacity .55s ease;background:radial-gradient(circle,'+(dark?'#14b8a6':'#e8a33d')+' 0%,transparent 70%);';
-  document.body.appendChild(b);requestAnimationFrame(()=>{b.style.width='160vmax';b.style.height='160vmax';b.style.opacity='0';});
+  b.style.cssText='position:fixed;pointer-events:none;z-index:9998;border-radius:50%;'+
+    'top:'+cy+'px;left:'+cx+'px;transform:translate(-50%,-50%);width:0;height:0;'+
+    'transition:width .55s ease,height .55s ease,opacity .55s ease;'+
+    'background:radial-gradient(circle,'+(dark?'#14b8a6':'#e8a33d')+' 0%,transparent 70%);';
+  document.body.appendChild(b);
+  requestAnimationFrame(()=>{b.style.width='60vmax';b.style.height='60vmax';b.style.opacity='0';});
   setTimeout(()=>b.remove(),650);
 });
 
@@ -1296,8 +1417,59 @@ document.querySelectorAll('.rip').forEach(btn=>{
   });
 });
 
+/* ── FUTURISTIC FLOATING SHAPES ── */
+(()=>{
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion) return;
+  const layer=document.getElementById('geoShapes');
+  const kinds=['circle','ring','hex','diamond','dot','gline'];
+  const count=window.innerWidth<600?0:(window.innerWidth<1000?9:16);
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const vw=()=>window.innerWidth,vh=()=>window.innerHeight;
+
+  for(let i=0;i<count;i++){
+    const kind=kinds[i%kinds.length];
+    const el=document.createElement('span');
+    el.className='gshape '+kind;
+
+    let size;
+    if(kind==='dot') size=rnd(3,6);
+    else if(kind==='gline') size=rnd(60,140);
+    else size=rnd(14,46);
+
+    if(kind==='gline'){el.style.height=size+'px';}
+    else{el.style.width=size+'px';el.style.height=size+'px';}
+
+    // pick an entry edge: 0=bottom,1=top,2=left,3=right
+    const edge=Math.floor(rnd(0,4));
+    let sx,sy,ex,ey;
+    if(edge===0){sx=rnd(0,vw());sy=vh()+40;ex=sx+rnd(-160,160);ey=-120;}
+    else if(edge===1){sx=rnd(0,vw());sy=-80;ex=sx+rnd(-160,160);ey=vh()+120;}
+    else if(edge===2){sx=-80;sy=rnd(0,vh());ex=vw()+120;ey=sy+rnd(-140,140);}
+    else{sx=vw()+80;sy=rnd(0,vh());ex=-120;ey=sy+rnd(-140,140);}
+
+    el.style.left='0px';el.style.top='0px';
+    el.style.setProperty('--sx',sx+'px');
+    el.style.setProperty('--sy',sy+'px');
+    el.style.setProperty('--ex',ex+'px');
+    el.style.setProperty('--ey',ey+'px');
+    el.style.setProperty('--rot',rnd(-180,180)+'deg');
+    el.style.setProperty('--op',rnd(.1,.28).toFixed(2));
+    el.style.setProperty('--dur',rnd(18,42).toFixed(1)+'s');
+    el.style.setProperty('--del','-'+rnd(0,40).toFixed(1)+'s');
+
+    layer.appendChild(el);
+  }
+
+  // pause all background animation when tab is hidden (perf)
+  document.addEventListener('visibilitychange',()=>{
+    document.body.classList.toggle('anim-paused',document.hidden);
+  });
+})();
+
 /* ── FLOATING TECH ICONS ── */
 (()=>{
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const layer=document.getElementById('flogos');
   const icons=['💻','🐍','☕','🗄️','🧠','🔧','🌐','⚡','🧩','📈'];
   icons.forEach((ic,i)=>{
@@ -1341,14 +1513,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   });
 });
 
-/* ── CONTACT FORM ──
-   Sends the message directly to Chitra's inbox using Web3Forms (free,
-   no backend needed — https://web3forms.com). To activate:
-   1. Go to https://web3forms.com, enter your email, get a free Access Key
-      (no signup/login required — it's emailed to you instantly).
-   2. Paste that key below in place of "YOUR_WEB3FORMS_ACCESS_KEY".
-   Until a real key is set, the form automatically falls back to opening
-   the visitor's email client instead (mailto:), so it always works. */
+
 const WEB3FORMS_KEY='YOUR_WEB3FORMS_ACCESS_KEY';
 const OWNER_EMAIL='chitramuthuvinayagam@gmail.com';
 
